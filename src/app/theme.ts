@@ -5,7 +5,7 @@ export const getTheme = (mode: PaletteMode) =>
     palette: {
       mode,
       primary: {
-        main: mode === 'dark' ? '#818CF8' : '#4F46E5', // Refined Indigo
+        main: mode === 'dark' ? '#A5C8E8' : '#244C70', // Refined Indigo
         light: mode === 'dark' ? '#A5B4FC' : '#6366F1',
         dark: mode === 'dark' ? '#6366F1' : '#3730A3',
         contrastText: '#FFFFFF',
@@ -29,7 +29,7 @@ export const getTheme = (mode: PaletteMode) =>
       },
     },
     typography: {
-      fontFamily: '"Outfit", system-ui, -apple-system, sans-serif',
+      fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
       h1: { fontWeight: 800 },
       h2: { fontWeight: 800 },
       h3: { fontWeight: 700 },

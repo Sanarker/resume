@@ -1,4 +1,4 @@
-# Hobby React
+# Sanarker S - Professional Resume
 
 Personal resume site built with React, TypeScript, Material UI, and Vite.
 
@@ -39,6 +39,6 @@ In repository Settings > Pages, set the build and deployment source to **GitHub 
 Push these changes to `main` to activate the updated workflow, or run it from the Actions tab after it is committed.
 
 Production builds use the base path returned by GitHub Pages, including custom domains.
-Local builds default to `/hobby-react/`; set `VITE_BASE_PATH=/` when building for a root domain manually.
+Local builds default to `/resume/`; set `VITE_BASE_PATH=/` when building for a root domain manually.
 
 The `gh-pages` npm package is not needed by this workflow. Version 6.3.0 was tested during setup but its dependency chain reintroduced high-severity audit findings, so it was removed.

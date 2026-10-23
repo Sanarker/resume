@@ -48,7 +48,7 @@ jobs:
       - name: Type-check and build
         run: npm run build
         env:
-          VITE_BASE_PATH: ${{ steps.pages.outcome == 'success' && format('{0}/', steps.pages.outputs.base_path) || '/hobby-react/' }}
+          VITE_BASE_PATH: ${{ steps.pages.outcome == 'success' && format('{0}/', steps.pages.outputs.base_path) || '/resume/' }}
 
       - name: Verify build output
         run: |
