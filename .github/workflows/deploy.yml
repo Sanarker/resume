@@ -1,56 +1,80 @@
-name: Deploy to GitHub Pages
+name: Check and deploy to GitHub Pages
 
 on:
   push:
-    branches: ["main"]
+    branches: [main]
+  pull_request:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: "pages"
+  group: pages-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pages: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - name: Set up Node
+        uses: actions/setup-node@v7
         with:
-          node-version: "20"
-          cache: 'npm'
+          node-version: '24'
+          cache: npm
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install locked dependencies
+        run: npm ci
 
-      # Explicitly install Linux-specific rollup binary to fix platform mismatch
-      - name: Install Linux Rollup
-        run: npm install @rollup/rollup-linux-x64-gnu
+      - name: Audit dependencies
+        run: npm audit
 
-      - name: Build
-        run: npm run build
+      - name: Lint
+        run: npm run lint
 
-      - name: Setup Pages
+      - name: Configure Pages
+        id: pages
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         uses: actions/configure-pages@v5
 
-      - name: Upload artifact
+      - name: Type-check and build
+        run: npm run build
+        env:
+          VITE_BASE_PATH: ${{ steps.pages.outcome == 'success' && format('{0}/', steps.pages.outputs.base_path) || '/hobby-react/' }}
+
+      - name: Verify build output
+        run: |
+          test -s dist/index.html
+          test -n "$(find dist/assets -type f -name '*.js' -size +0c -print -quit)"
+
+      - name: Upload Pages artifact
+        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './dist'
+          path: dist
 
   deploy:
+    needs: build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages-deploy
+      cancel-in-progress: false
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
     steps:
       - name: Deploy to GitHub Pages
         id: deployment

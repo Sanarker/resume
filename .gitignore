@@ -8,8 +8,7 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-# dist (commented for manual commit deploy)
-# dist
+dist
 dist-ssr
 *.local
 

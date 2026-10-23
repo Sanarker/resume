@@ -1,6 +1,7 @@
-import { useRef, useState, useMemo } from 'react';
+import { useRef, useState } from 'react';
 import { Container, Typography, Box, Stack, Chip, Grid, Button, IconButton, Snackbar, Alert, TextField, InputAdornment } from '@mui/material';
 import type { Theme } from '@mui/material';
+import type { SystemStyleObject } from '@mui/system';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import {
     PersonOutlined as AboutIcon,
@@ -93,7 +94,7 @@ const KineticText = ({ text }: { text: string }) => {
 
 interface SpotlightCardProps {
     children: React.ReactNode;
-    style?: any;
+    style?: SystemStyleObject<Theme>;
     id?: string;
 }
 
@@ -234,9 +235,9 @@ export default function Resume() {
         FrontendTools: ["Angular", "React", "TypeScript", "JavaScript", "HTML5", "CSS", "Git", "GitHub", "Bitbucket", "JIRA", "SonarQube", "AEM"],
     };
 
-    const allSkills = useMemo(() => Array.from(new Set(Object.values(skillsCategories).flat())), []);
+    const allSkills = Array.from(new Set(Object.values(skillsCategories).flat()));
 
-    const filteredSkills = useMemo(() => {
+    const filteredSkills = (() => {
         let list = activeTab === 'All'
             ? allSkills
             : skillsCategories[activeTab as keyof typeof skillsCategories] || [];
@@ -247,7 +248,7 @@ export default function Resume() {
         }
 
         return list;
-    }, [activeTab, searchQuery, allSkills]);
+    })();
 
     const experiences = [
         {
@@ -300,7 +301,7 @@ export default function Resume() {
         }
     ];
 
-    const filteredProjects = useMemo(() => {
+    const filteredProjects = (() => {
         if (!searchQuery.trim()) return projects;
         const query = searchQuery.toLowerCase();
         return projects.filter(p =>
@@ -308,7 +309,7 @@ export default function Resume() {
             p.desc.toLowerCase().includes(query) ||
             p.tech.some(t => t.toLowerCase().includes(query))
         );
-    }, [searchQuery, projects]);
+    })();
 
     const languages = [
         { name: "English", level: "Business Level" },
